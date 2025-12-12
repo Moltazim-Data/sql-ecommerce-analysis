@@ -1,34 +1,61 @@
 import duckdb
 
-# Load data from CSV
 con = duckdb.connect()
+csv_path = "data/data.csv"
 
-df = con.execute("""
+def q(sql: str):
+    return con.execute(sql).fetchdf()
+
+print("🔹 Preview of the dataset:\n")
+print(q(f"""
     SELECT *
-    FROM read_csv_auto('data/data.csv')
-""").df()
+    FROM read_csv_auto('{csv_path}', encoding='latin-1', ignore_errors=true)
+    LIMIT 5
+"""))
 
-print("Dataset loaded:")
-print(df.head())
-
-# Example queries
-print("\n🔹 Total number of orders:")
-print(con.execute("""
-    SELECT COUNT(*) AS total_orders
-    FROM read_csv_auto('data/data.csv')
-""").fetchdf())
+print("\n🔹 Number of rows in the dataset:")
+print(q(f"""
+    SELECT COUNT(*) AS n_rows
+    FROM read_csv_auto('{csv_path}', encoding='latin-1', ignore_errors=true)
+"""))
 
 print("\n🔹 Total revenue:")
-print(con.execute("""
-    SELECT SUM(UnitPrice * Quantity) AS revenue
-    FROM read_csv_auto('data/data.csv')
-""").fetchdf())
+print(q(f"""
+    SELECT SUM(Quantity * UnitPrice) AS total_revenue
+    FROM read_csv_auto('{csv_path}', encoding='latin-1', ignore_errors=true)
+"""))
 
-print("\n🔹 Top 10 products by sales:")
-print(con.execute("""
-    SELECT Description, SUM(Quantity) AS total_sold
-    FROM read_csv_auto('data/data.csv')
-    GROUP BY Description
-    ORDER BY total_sold DESC
+print("\n🔹 Top 10 countries by revenue:")
+print(q(f"""
+    SELECT Country,
+           SUM(Quantity * UnitPrice) AS revenue
+    FROM read_csv_auto('{csv_path}', encoding='latin-1', ignore_errors=true)
+    GROUP BY Country
+    ORDER BY revenue DESC
     LIMIT 10
-""").fetchdf())
+"""))
+
+print("\n🔹 Monthly revenue (first 12 months):")
+print(q(f"""
+    WITH parsed AS (
+        SELECT
+            COALESCE(
+                try_strptime(InvoiceDate, '%d/%m/%Y %H:%M'),
+                try_strptime(InvoiceDate, '%m/%d/%Y %H:%M')
+            ) AS ts,
+            Quantity,
+            UnitPrice
+        FROM read_csv_auto('{csv_path}', encoding='latin-1', ignore_errors=true)
+    )
+    SELECT
+        strftime(ts, '%Y-%m') AS year_month,
+        SUM(Quantity * UnitPrice) AS revenue
+    FROM parsed
+    WHERE ts IS NOT NULL
+    GROUP BY year_month
+    ORDER BY year_month
+    LIMIT 12
+"""))
+
+print("\n🎉 SQL analysis finished.")
+
