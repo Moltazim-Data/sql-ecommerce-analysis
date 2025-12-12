@@ -27,33 +27,42 @@ This project analyzes an e-commerce transactions dataset using **SQL** (via **Du
 sql-ecommerce-analysis/
 │── data/
 │ └── data.csv
+│── results/
+│ ├── revenue_by_country.csv
+│ └── monthly_revenue.csv
 │── sql_analysis.py
 └── README.md
 ```
 
 ---
 
-## 🔍 Key Queries / Analysis
-- Total number of rows
-- Total revenue: `SUM(Quantity * UnitPrice)`
-- Top 10 countries by revenue
-- Monthly revenue trend using parsed timestamps
-
-✅ Real-world fixes included:
-- Non-UTF8 CSV encoding handled with `encoding='latin-1'`
-- Mixed date formats handled using `try_strptime()` + `coalesce()`
+## 📊 Key Results
+- **Total revenue:** ~9.75 million
+- **Total transactions:** 541,909
+- **Top country:** United Kingdom (~84% of revenue)
+- **Seasonality:** Revenue peaks in late 2010 and early 2011
 
 ---
 
-## 📈 Results Snapshot
-- Rows: **541,909**
-- Total revenue: **~ 9.75M**
-- Top country by revenue: **United Kingdom**
-- Monthly revenue output produced successfully
+## 🔍 Analysis Performed
+- Total revenue calculation
+- Revenue by country
+- Monthly revenue trend
+- Top products by revenue
+- Top customers by revenue
+- Cancelled orders detection
 
 ---
 
-## ▶️ How to Run
+## ⚠ Real-world Challenges Solved
+- Non-UTF8 CSV encoding (`latin-1`)
+- Mixed date formats (DD/MM and MM/DD)
+- Large dataset performance using DuckDB
+
+---
+
+## ▶ How to Run
+
 ```bash
 python3 -m pip install --user duckdb
 python3 sql_analysis.py
