@@ -59,3 +59,34 @@ print(q(f"""
 
 print("\n🎉 SQL analysis finished.")
 
+# Save results to CSV files
+q("""
+    SELECT Country,
+           SUM(Quantity * UnitPrice) AS revenue
+    FROM read_csv_auto('data/data.csv', encoding='latin-1', ignore_errors=true)
+    GROUP BY Country
+    ORDER BY revenue DESC
+""").to_csv("results/revenue_by_country.csv", index=False)
+
+q("""
+    WITH parsed AS (
+        SELECT
+            COALESCE(
+                try_strptime(InvoiceDate, '%d/%m/%Y %H:%M'),
+                try_strptime(InvoiceDate, '%m/%d/%Y %H:%M')
+            ) AS ts,
+            Quantity,
+            UnitPrice
+        FROM read_csv_auto('data/data.csv', encoding='latin-1', ignore_errors=true)
+    )
+    SELECT
+        strftime(ts, '%Y-%m') AS year_month,
+        SUM(Quantity * UnitPrice) AS revenue
+    FROM parsed
+    WHERE ts IS NOT NULL
+    GROUP BY year_month
+    ORDER BY year_month
+""").to_csv("results/monthly_revenue.csv", index=False)
+
+print("✅ Results saved to /results folder")
+
