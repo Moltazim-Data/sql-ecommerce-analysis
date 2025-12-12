@@ -1,4 +1,4 @@
-# sql-ecommerce-analysis
+# SQL-ecommerce-analysis
 Beginner SQL analysis project using an E-commerce Sales dataset.
 # 🛒 SQL E-commerce Analysis (DuckDB)
 
@@ -23,11 +23,13 @@ This project analyzes an e-commerce transactions dataset using **SQL** (via **Du
 
 ## 📁 Project Structure
 
+```
 sql-ecommerce-analysis/
 │── data/
 │ └── data.csv
 │── sql_analysis.py
 └── README.md
+```
 
 ---
 
@@ -55,10 +57,14 @@ sql-ecommerce-analysis/
 ```bash
 python3 -m pip install --user duckdb
 python3 sql_analysis.py
+```
+---
 
-👨‍💻 Author
+## 👨‍💻 Author
 
 Abdelhamid Moltazim
+
 Junior Data Analyst — Vienna, Austria
+
 GitHub: https://github.com/Moltazim-Data
 
