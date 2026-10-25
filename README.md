@@ -1,79 +1,42 @@
-# SQL-ecommerce-analysis
-Beginner SQL analysis project using an E-commerce Sales dataset.
-# 🛒 SQL E-commerce Analysis (DuckDB)
+# SQL E-commerce Analysis with DuckDB
 
-This project analyzes an e-commerce transactions dataset using **SQL** (via **DuckDB**) to compute key business metrics such as revenue, top-performing countries, and monthly revenue trends.
+Analyze the Online Retail transaction data with Python and DuckDB SQL. The current script calculates transaction-line revenue as `Quantity * UnitPrice`, country summaries, and monthly totals using parsed invoice dates.
 
----
+## Important metric caveat
 
-## 📌 Project Goals
-- Load and query a large CSV dataset using SQL
-- Calculate total revenue
-- Rank countries by revenue
-- Build a monthly revenue trend (handling real-world messy date formats)
+The current revenue calculation is a **line-value sum**, not a fully reconciled net-sales measure: the script does not consistently exclude cancelled invoices, returned quantities, or non-positive quantities/prices. Treat reported totals and country shares as exploratory until those rules are implemented and validated. Document the currency based on the source dataset metadata.
 
----
+## Contents
 
-## 🛠 Tools Used
-- Python 3
-- DuckDB (SQL engine)
-- Git & GitHub
+- `data/data.csv` — source dataset (check its source and license before redistribution).
+- `sql_analysis.py` — DuckDB SQL workflow.
+- `results/revenue_by_country.csv` — generated country aggregation.
+- `results/monthly_revenue.csv` — generated monthly aggregation.
 
----
+## Run
 
-## 📁 Project Structure
-
-```
-sql-ecommerce-analysis/
-│── data/
-│ └── data.csv
-│── results/
-│ ├── revenue_by_country.csv
-│ └── monthly_revenue.csv
-│── sql_analysis.py
-└── README.md
-```
-
----
-
-## 📊 Key Results
-- **Total revenue:** ~9.75 million
-- **Total transactions:** 541,909
-- **Top country:** United Kingdom (~84% of revenue)
-- **Seasonality:** Revenue peaks in late 2010 and early 2011
-
----
-
-## 🔍 Analysis Performed
-- Total revenue calculation
-- Revenue by country
-- Monthly revenue trend
-- Top products by revenue
-- Top customers by revenue
-- Cancelled orders detection
-
----
-
-## ⚠ Real-world Challenges Solved
-- Non-UTF8 CSV encoding (`latin-1`)
-- Mixed date formats (DD/MM and MM/DD)
-- Large dataset performance using DuckDB
-
----
-
-## ▶ How to Run
+Python 3.10+ recommended.
 
 ```bash
-python3 -m pip install --user duckdb
-python3 sql_analysis.py
+python -m pip install duckdb pandas
+python sql_analysis.py
 ```
----
 
-## 👨‍💻 Author
+Run from the repository root. The script expects `data/data.csv` and writes outputs under `results/`.
 
-Abdelhamid Moltazim
+## Current analyses
 
-Junior Data Analyst — Vienna, Austria
+- Row count and dataset preview
+- Total line-value revenue
+- Revenue by country
+- Monthly line-value trend with two attempted date formats
 
-GitHub: https://github.com/Moltazim-Data
+The README intentionally does not claim top-product, top-customer, or cancellation analysis as completed outputs until those queries are present and tested.
 
+## Recommended next improvement
+
+Add explicit cancellation/return rules, report invalid/unparsed dates, document the data source and currency, and test SQL aggregates against a small hand-calculated fixture.
+
+## Author
+
+Abdelhamid Moltazim · [GitHub profile](https://github.com/Moltazim-Data)
